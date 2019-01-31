@@ -12,16 +12,6 @@ final class Acronym: Codable {
     }
 }
 
-//extension Acronym: Model {
-//    typealias Database = SQLiteDatabase
-//    typealias ID = Int
-//    public static var idKey: IDKey = \Acronym.id;
-//}
-
-//extension Acronym: SQLiteModel {}
-//extension Acronym: Migration {}
-//extension Acronym: Content {}
-
 extension Acronym: PostgreSQLModel {}
 extension Acronym: Migration {}
 extension Acronym: Content {}

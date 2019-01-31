@@ -3,6 +3,7 @@ import Fluent
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
+    /*
     /// post方法,/api/acronyms/,带id参数就是更新，不带就是创建
     router.post("api", "acronyms") { (req) -> Future<Acronym> in
        let futureAcroym = try req.content.decode(Acronym.self);
@@ -72,6 +73,8 @@ public func routes(_ router: Router) throws {
     router.get("api", "acronyms", "sorted") { (req) -> Future<[Acronym]> in
         return Acronym.query(on: req).sort(\.short, .descending).sort(\.id, .ascending).all();
     }
-    
-    
+ 
+ */
+    let accronymsController = AcronymsController();
+    try router.register(collection: accronymsController);
 }
