@@ -1,5 +1,4 @@
 import Vapor
-import FluentSQLite
 import FluentPostgreSQL
 
 final class Acronym: Codable {
