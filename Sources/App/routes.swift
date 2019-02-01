@@ -77,4 +77,7 @@ public func routes(_ router: Router) throws {
  */
     let accronymsController = AcronymsController();
     try router.register(collection: accronymsController);
+    
+    let usersController = UsersController()
+    try router.register(collection: usersController)
 }
