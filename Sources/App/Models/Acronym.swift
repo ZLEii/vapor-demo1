@@ -20,6 +20,12 @@ extension Acronym {
     }
 }
 
+extension Acronym {
+    var categories: Siblings<Acronym, Category, AcronymCategoryPivot> {
+        return siblings();
+    }
+}
+
 extension Acronym: PostgreSQLModel {}
 extension Acronym: Migration {
     /// 添加外键约束
