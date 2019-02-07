@@ -1,0 +1,4 @@
+module CCryptoOpenSSL {
+    umbrella "/Users/apple/Downloads/vapor-demo1-master/.build/checkouts/crypto.git-3773925643536918783/Sources/CCryptoOpenSSL/include"
+    export *
+}
