@@ -16,6 +16,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     /// 3
     let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
     let username = Environment.get("DATABASE_USER") ?? "vapor"
+//<<<<<<< HEAD
     let databaseName: String;
     let databasePort: Int;
     let password = Environment.get("DTABASE_PASSWORD") ?? "password"
@@ -35,6 +36,12 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     
     
     let postgreSQLDatabaseConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, database: databaseName, password: password);
+//=======
+//    let databaseName = Environment.get("DATABASE_DB") ?? "vapor"
+//    let password = Environment.get("DTABASE_PASSWORD") ?? "password"
+//
+//    let postgreSQLDatabaseConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: 5432, username: username, database: databaseName, password: password);
+//>>>>>>> 2a8403d893d3c02ad5f8988cd41a13175d9dee52
     let postgresDatabase = PostgreSQLDatabase(config: postgreSQLDatabaseConfig);
     
     var databases = DatabasesConfig()

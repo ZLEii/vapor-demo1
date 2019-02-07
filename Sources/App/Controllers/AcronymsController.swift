@@ -13,7 +13,6 @@ struct AcronymsController: RouteCollection {
     func boot(router: Router) throws {
         let acronymsRoutes = router.grouped("api", "acronyms");
         acronymsRoutes.get("/", use: getAllHandler)
-        
         // 1
         acronymsRoutes.post(Acronym.self,use: createHandler)
         // 2
