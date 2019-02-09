@@ -1,11 +1,12 @@
 import Vapor
 /// 1
 import FluentPostgreSQL
+import Leaf
 
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
     /// 2
     try services.register(FluentPostgreSQLProvider())
-
+    try services.register(LeafProvider())
     let router = EngineRouter.default()
     try routes(router)
     services.register(router, as: Router.self)
@@ -16,7 +17,6 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     /// 3
     let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
     let username = Environment.get("DATABASE_USER") ?? "vapor"
-//<<<<<<< HEAD
     let databaseName: String;
     let databasePort: Int;
     let password = Environment.get("DTABASE_PASSWORD") ?? "password"
@@ -36,16 +36,9 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     
     
     let postgreSQLDatabaseConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, database: databaseName, password: password);
-//=======
-//    let databaseName = Environment.get("DATABASE_DB") ?? "vapor"
-//    let password = Environment.get("DTABASE_PASSWORD") ?? "password"
-//
-//    let postgreSQLDatabaseConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: 5432, username: username, database: databaseName, password: password);
-//>>>>>>> 2a8403d893d3c02ad5f8988cd41a13175d9dee52
     let postgresDatabase = PostgreSQLDatabase(config: postgreSQLDatabaseConfig);
     
     var databases = DatabasesConfig()
-//    databases.add(database: sqlite, as: .sqlite)
     ///4
     databases.add(database: postgresDatabase, as: .psql)
     services.register(databases)
@@ -62,4 +55,5 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     commandConfig.useFluentCommands();
     services.register(commandConfig);
 
+    config.prefer(LeafRenderer.self, for: ViewRenderer.self);
 }
