@@ -12,6 +12,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(router, as: Router.self)
     var middlewares = MiddlewareConfig() // Create _empty_ middleware config
     middlewares.use(ErrorMiddleware.self)
+    middlewares.use(FileMiddleware.self)
     services.register(middlewares)
 
     /// 3
