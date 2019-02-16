@@ -2,19 +2,22 @@ import Vapor
 /// 1
 import FluentPostgreSQL
 import Leaf
+import Authentication
 
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
     /// 2
     try services.register(FluentPostgreSQLProvider())
     try services.register(LeafProvider())
+    try services.register(AuthenticationProvider())
     let router = EngineRouter.default()
     try routes(router)
     services.register(router, as: Router.self)
     var middlewares = MiddlewareConfig() // Create _empty_ middleware config
     middlewares.use(ErrorMiddleware.self)
     middlewares.use(FileMiddleware.self)
+    middlewares.use(SessionsMiddleware.self);
     services.register(middlewares)
-
+    
     /// 3
     let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
     let username = Environment.get("DATABASE_USER") ?? "vapor"
@@ -50,6 +53,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Acronym.self, database: .psql)
     migrations.add(model: Category.self, database: .psql)
     migrations.add(model: AcronymCategoryPivot.self, database: .psql)
+    migrations.add(model: Token.self, database: .psql)
+    migrations.add(migration: AdminUser.self, database: .psql);
     services.register(migrations)
     
     var commandConfig = CommandConfig.default();
@@ -57,4 +62,5 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(commandConfig);
 
     config.prefer(LeafRenderer.self, for: ViewRenderer.self);
+    config.prefer(MemoryKeyedCache.self, for: KeyedCache.self)
 }

@@ -9,6 +9,7 @@ import Foundation
 import Foundation
 import Vapor
 import FluentPostgreSQL
+import Authentication
 
 final class User: Codable {
     var id: UUID?
@@ -61,6 +62,19 @@ extension User: Migration {
 }
 extension User: Parameter {}
 
+extension User: BasicAuthenticatable {
+    static let usernameKey: UsernameKey = \User.username;
+    static let passwordKey: PasswordKey = \User.password;
+}
+
+extension User: TokenAuthenticatable {
+    typealias TokenType = Token
+}
+
+extension User: PasswordAuthenticatable {}
+extension User: SessionAuthenticatable {}
+
+
 extension Future where T: User {
     func convertToPublic() -> Future<User.Public> {
         return self.map(to: User.Public.self) { user in
@@ -68,3 +82,21 @@ extension Future where T: User {
         }
     }
 }
+
+struct AdminUser: Migration {
+    typealias Database = PostgreSQLDatabase
+    static func prepare(on conn: PostgreSQLConnection) -> EventLoopFuture<Void> {
+        let password = try? BCrypt.hash("password");
+        guard let hashedPassword = password else {
+            fatalError("Failed to create admin user")
+        }
+        let user = User(name: "Admin", username: "admin", password: hashedPassword);
+        return user.save(on: conn).transform(to: ())
+    }
+    
+    static func revert(on conn: PostgreSQLConnection) -> EventLoopFuture<Void> {
+        return Future.done(on: conn);
+    }
+}
+
+
