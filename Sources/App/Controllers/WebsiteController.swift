@@ -94,6 +94,7 @@ struct RegisterData: Content, Validatable, Reflectable {
     let username: String
     let password: String
     let confirmPassword: String
+    let twitterURL: String?
     
     static func validations() throws -> Validations<RegisterData> {
         var validations = Validations(RegisterData.self);
@@ -139,7 +140,7 @@ struct WebsiteController: RouteCollection {
         
         authSessionRoutes.post("logout", use: logoutHandler)
         authSessionRoutes.get("register", use: registerHandler);
-        authSessionRoutes.post(RegisterData.self, at: "register", use: registerPosthHandler);
+        authSessionRoutes.post(RegisterData.self, at: "register", use: registerPostHandler);
         
         let protectedRoutes = authSessionRoutes.grouped(RedirectMiddleware<User>(path: "/login"))
         protectedRoutes.get("acronyms", "create", use: createAcronymHandler);
@@ -333,7 +334,7 @@ struct WebsiteController: RouteCollection {
         return try req.view().render("register", context)
     }
     
-    func registerPosthHandler(_ req: Request, data: RegisterData) throws -> Future<Response> {
+    func registerPostHandler(_ req: Request, data: RegisterData) throws -> Future<Response> {
         do {
             try data.validate()
         } catch(let error) {
@@ -349,7 +350,11 @@ struct WebsiteController: RouteCollection {
             return result;
         }
         let password = try BCrypt.hash(data.password);
-        let user = User(name: data.name, username: data.username, password: password)
+        var twitterURL: String?
+        if let twitter = data.twitterURL, !twitter.isEmpty {
+            twitterURL = twitter;
+        }
+        let user = User(name: data.name, username: data.username, password: password, twitterURL: twitterURL)
         return user.save(on: req).map(to: Response.self, { (user) in
             try req.authenticateSession(user);
             return req.redirect(to: "/");

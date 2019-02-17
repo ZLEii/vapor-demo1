@@ -16,20 +16,24 @@ final class User: Codable {
     var name: String
     var username: String
     var password: String;
-    init(name: String, username: String, password: String) {
+    var twitterURL: String?;
+    init(name: String, username: String, password: String, twitterURL: String? = nil) {
         self.name = name
         self.username = username
         self.password = password;
+        self.twitterURL = twitterURL;
     }
     
     final class Public: Codable {
         var id: UUID?
         var name: String;
         var username: String;
-        init(id: UUID?, name: String, username: String) {
+        var twitterURL: String?;
+        init(id: UUID?, name: String, username: String, twitterURL: String? = nil) {
             self.id = id;
             self.name = name;
             self.username = username;
+            self.twitterURL = twitterURL;
         }
     }
 }
@@ -38,7 +42,7 @@ extension User.Public: Content {}
 
 extension User {
     func convertToPublic() -> User.Public {
-        let userPublic = User.Public(id: id, name: name, username: username)
+        let userPublic = User.Public(id: id, name: name, username: username,twitterURL: twitterURL)
         return userPublic;
     }
 }
@@ -55,7 +59,13 @@ extension User: Content {}
 extension User: Migration {
     static func prepare(on conn: PostgreSQLConnection) -> Future<Void> {
         return Database.create(self, on: conn, closure: { (builder) in
-            try addProperties(to: builder)
+            /// 添加全部属性
+//            try addProperties(to: builder)
+            // 手动一个个添加属性
+            builder.field(for: \.id, isIdentifier: true)
+            builder.field(for: \.name)
+            builder.field(for: \.username)
+            builder.field(for: \.password)
             builder.unique(on: \.username)
         })
     }

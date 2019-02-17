@@ -2,6 +2,9 @@
 #set("content") {
 <h1>#(user.name)</h1>
 <h2>#(user.username)</h2>
+#if(user.twitterURL) {
+- #(user.twitterURL)
+}
 #if(count(acronyms) > 0) {
 <table class="table table-bordered table-hover">
     <thead class="thead-light">

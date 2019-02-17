@@ -54,7 +54,15 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Category.self, database: .psql)
     migrations.add(model: AcronymCategoryPivot.self, database: .psql)
     migrations.add(model: Token.self, database: .psql)
-    migrations.add(migration: AdminUser.self, database: .psql);
+    switch env {
+    case .development, .testing:
+        migrations.add(migration: AdminUser.self, database: .psql);
+    default:
+        break;
+    }
+    
+    migrations.add(migration: AddTwitterURLToUser.self, database: .psql)
+    migrations.add(migration: MakeCategoriesUnique.self, database: .psql)
     services.register(migrations)
     
     var commandConfig = CommandConfig.default();
@@ -63,4 +71,6 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     config.prefer(LeafRenderer.self, for: ViewRenderer.self);
     config.prefer(MemoryKeyedCache.self, for: KeyedCache.self)
+    
+    
 }
